@@ -1,0 +1,75 @@
+.outline {
+  stroke: black;
+  stroke-width: 0.03;
+  fill: white;
+}
+
+/* Number symbol */
+.symbol {
+  stroke: black;
+  stroke-width: 0.05;
+}
+text {
+  font: 0.08em sans-serif;
+  fill: black;
+  text-anchor: middle;
+}
+
+@media screen {
+	svg.page {
+		border: 1px solid black;
+		max-height: 800px;
+		max-width: 800px;
+	}
+}
+
+@media print {
+	svg.page {
+		width: 840mm;
+		height: 1050mm;
+	}
+	#options {
+		display: none;
+	}
+}
+
+#loading {
+	display: none;
+}
+body.loading #loading {
+	display: block;
+}
+body.loading #everything {
+	display: none;
+}
+
+#options {
+	max-width: 20em;
+	margin-bottom: 3em;
+	padding-left: 1em;
+}
+
+#options label {
+	display: block;
+	margin: 1em 0;
+}
+#options .input {
+	width: 5em;
+	text-align: right;
+	float: right;
+	margin-left: 3em;
+}
+#options .warning {
+	float: right;
+}
+
+@page {
+	size: a0;
+}
+
+svg.page {
+	display: inherit;
+}
+#cards {
+	display: none;
+}
