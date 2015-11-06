@@ -171,24 +171,6 @@ Dobbler.prototype = {
 	formatName: 'a4',
 
 
-	setup_form: function() {
-		var form = document.querySelector('#options');
-		
-		for(var geometry in geometries) {
-			form.querySelector('select[name=geometry]').appendChild(make_element('option',{value:geometry},geometry));
-		}
-		form.querySelector('select[name=geometry]').value = this.geometryName;
-
-		form.querySelector('input[name=depth]').value = this.depth;
-		form.querySelector('input[name=rows]').value = this.rows;
-		form.querySelector('input[name=cols]').value = this.cols;
-
-		for(var format in formats) {
-			form.querySelector('select[name=format]').appendChild(make_element('option',{value:format},format));
-		}
-		form.querySelector('select[name=format]').value = this.formatName;
-	},
-
 	make_symbols: function() {
 		for(var i=0;i<57;i++) {
 			makeSymbol_emoji(i);
@@ -198,6 +180,7 @@ Dobbler.prototype = {
 	load_settings: function() {
 		if(document.location.search) {
 			var bits = document.location.search.slice(1).split('&');
+			var width,height;
 			bits.map(function(bit) {
 				var item = bit.split('=');
 				var name = decodeURIComponent(item[0]);
@@ -235,12 +218,41 @@ Dobbler.prototype = {
 							this.formatName = value;
 						}
 						break;
+					case 'width':
+						width = value;
+						break;
+					case 'height':
+						height = value;
+						break;
 					}
 				}
 			},this);
 		}
 		this.geometry = geometries[this.geometryName];
-		this.format = formats[this.formatName];
+		if(width!==undefined && height!==undefined) {
+			this.format = [width,height];
+		} else {
+			this.format = formats[this.formatName];
+		}
+	},
+
+	setup_form: function() {
+		var form = document.querySelector('#options');
+		
+		for(var geometry in geometries) {
+			form.querySelector('select[name=geometry]').appendChild(make_element('option',{value:geometry},geometry));
+		}
+		form.querySelector('select[name=geometry]').value = this.geometryName;
+
+		form.querySelector('input[name=depth]').value = this.depth;
+		form.querySelector('input[name=page]').value = this.page;
+		form.querySelector('input[name=rows]').value = this.rows;
+		form.querySelector('input[name=cols]').value = this.cols;
+
+		for(var format in formats) {
+			form.querySelector('select[name=format]').appendChild(make_element('option',{value:format},format));
+		}
+		form.querySelector('select[name=format]').value = this.formatName;
 	},
 
 	show_pages: function() {
