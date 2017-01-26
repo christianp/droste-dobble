@@ -59,10 +59,13 @@ function makeCard(id,symbols) {
     	var drawdeck = fillArrayWithNumbers(symbols.length);
 	shuffle(drawdeck);
 	for(var i=0;i<symbols.length;i++) {
-		var transform = 'scale('+scale+')';
+		var this_scale = alpha*scale+(1-alpha)*scale*Math.random();
+        	var this_translate = translate/this_scale;
+        	var this_rotate = 360*Math.random();
+		var transform = 'scale('+this_scale+')';
 		if(n==3 || i>0) {
 			var rotate = (i*360/n);
-			transform += ' translate('+translate+') rotate('+rotate+' -'+translate+' 0) rotate(-90)';
+			transform += 'translate('+this_translate+') rotate('+rotate+' -'+this_translate+' 0) rotate('+this_rotate+')';
 		}
 		t += '<use x="0" y="0" transform="'+transform+'" xlink:href="#'+symbols[drawdeck.pop()]+'"></use>'
 	}
