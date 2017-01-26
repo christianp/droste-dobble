@@ -11,6 +11,7 @@ function shuffle (array) { // stolen shamelessly from https://www.frankmitchell.
         array[i] = array[j]
         array[j] = temp
     }
+    return array;
 }
 
 function fillArrayWithNumbers(n) { // stolen shamelessly from http://www.2ality.com/2013/11/initializing-arrays.html
