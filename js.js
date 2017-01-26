@@ -49,19 +49,19 @@ function makeCard(id,symbols) {
 	if(symbols.length==3) {
 		n = 3;
 		scale = 0.44;
-		translate = 1.2;
+		translate = 1.2/scale;
 	} else if(symbols.length==8) {
 		n = 7;
 		scale = 0.28;
-		translate = 2.4;
+        translate = 2.4*scale;
 	}
-	var alpha = 0.3;
-    	var drawdeck = fillArrayWithNumbers(symbols.length);
+    var alpha = 0.3;
+    var drawdeck = fillArrayWithNumbers(symbols.length);
 	shuffle(drawdeck);
 	for(var i=0;i<symbols.length;i++) {
-		var this_scale = alpha*scale+(1-alpha)*scale*Math.random();
-        	var this_translate = translate/this_scale;
-        	var this_rotate = 360*Math.random();
+        var this_scale = alpha*scale+(1-alpha)*scale*Math.random();
+        var this_translate = translate/this_scale;
+        var this_rotate = 360*Math.random();
 		var transform = 'scale('+this_scale+')';
 		if(n==3 || i>0) {
 			var rotate = (i*360/n);
@@ -187,11 +187,11 @@ function Dobbler() {
 }
 Dobbler.prototype = {
 
-	geometryName: 'dobble',
-	depth: 2,
+	geometryName: 'fano',
+	depth: 1,
 	page: null,
-	rows: 5,
-	cols: 4,
+	rows: 3,
+	cols: 2,
 	formatName: 'a4',
 
 
