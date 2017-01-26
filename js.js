@@ -185,7 +185,7 @@ function Dobbler() {
 }
 Dobbler.prototype = {
 
-	geometryName: 'fano',
+	geometryName: 'dobble',
 	depth: 1,
 	page: null,
 	rows: 3,
@@ -214,12 +214,6 @@ Dobbler.prototype = {
 						if(value in geometries) {
 							this.geometryName = value;
 						}
-						break;
-					case 'depth':
-						this.depth = Math.max(parseInt(value),1);
-						break;
-					case 'page':
-						this.page = Math.max(parseInt(value),0);
 						break;
 					case 'rows':
 						this.rows = Math.max(parseInt(value),1);
@@ -265,9 +259,6 @@ Dobbler.prototype = {
 			form.querySelector('select[name=geometry]').appendChild(make_element('option',{value:geometry},geometry));
 		}
 		form.querySelector('select[name=geometry]').value = this.geometryName;
-
-		form.querySelector('input[name=depth]').value = this.depth;
-		form.querySelector('input[name=page]').value = this.page;
 		form.querySelector('input[name=rows]').value = this.rows;
 		form.querySelector('input[name=cols]').value = this.cols;
 
