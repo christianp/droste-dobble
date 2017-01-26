@@ -49,11 +49,11 @@ function makeCard(id,symbols) {
 	if(symbols.length==3) {
 		n = 3;
 		scale = 0.44;
-		translate = 1.2/scale;
+		translate = 1.2*scale;
 	} else if(symbols.length==8) {
 		n = 7;
 		scale = 0.28;
-        translate = 2.4*scale;
+        	translate = 2.4*scale;
 	}
     var alpha = 0.3;
     var drawdeck = fillArrayWithNumbers(symbols.length);
