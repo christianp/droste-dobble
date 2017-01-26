@@ -4,16 +4,13 @@ var phi = (Math.sqrt(5)-1)/2;
 var alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
 function shuffle (array) { // stolen shamelessly from https://www.frankmitchell.org/2015/01/fisher-yates/
-  var i = 0
-    , j = 0
-    , temp = null
-
-  for (i = array.length - 1; i > 0; i -= 1) {
-    j = Math.floor(Math.random() * (i + 1))
-    temp = array[i]
-    array[i] = array[j]
-    array[j] = temp
-  }
+    var i = 0, j = 0, temp = null;
+    for (i = array.length - 1; i > 0; i -= 1) {
+        j = Math.floor(Math.random() * (i + 1))
+        temp = array[i]
+        array[i] = array[j]
+        array[j] = temp
+    }
 }
 
 function fillArrayWithNumbers(n) { // stolen shamelessly from http://www.2ality.com/2013/11/initializing-arrays.html
@@ -62,12 +59,12 @@ function makeCard(id,symbols) {
         var this_scale = alpha*scale+(1-alpha)*scale*Math.random();
         var this_translate = translate/this_scale;
         var this_rotate = 360*Math.random();
-		var transform = 'scale('+this_scale+')';
-		if(n==3 || i>0) {
-			var rotate = (i*360/n);
-			transform += 'translate('+this_translate+') rotate('+rotate+' -'+this_translate+' 0)';
-		}
-		t += '<use x="0" y="0" transform="'+transform+' rotate('+this_rotate+')" xlink:href="#'+symbols[drawdeck.pop()]+'"></use>'
+        var transform = 'scale('+this_scale+')';
+        if(n==3 || i>0) {
+            var rotate = (i*360/n);
+            transform += 'translate('+this_translate+') rotate('+rotate+' -'+this_translate+' 0)';
+        }
+        t += '<use x="0" y="0" transform="'+transform+' rotate('+this_rotate+')" xlink:href="#'+symbols[drawdeck.pop()]+'"></use>'
 	}
 	s.innerHTML = t;
 	document.querySelector('svg#cards defs').appendChild(s);
@@ -199,7 +196,7 @@ function Dobbler() {
 }
 Dobbler.prototype = {
 
-	geometryName: 'fano',
+	geometryName: 'dobble',
 	depth: 1,
 	page: null,
 	rows: 3,
