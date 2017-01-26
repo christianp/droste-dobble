@@ -65,9 +65,9 @@ function makeCard(id,symbols) {
 		var transform = 'scale('+this_scale+')';
 		if(n==3 || i>0) {
 			var rotate = (i*360/n);
-			transform += 'translate('+this_translate+') rotate('+rotate+' -'+this_translate+' 0) rotate('+this_rotate+')';
+			transform += 'translate('+this_translate+') rotate('+rotate+' -'+this_translate+' 0)';
 		}
-		t += '<use x="0" y="0" transform="'+transform+'" xlink:href="#'+symbols[drawdeck.pop()]+'"></use>'
+		t += '<use x="0" y="0" transform="'+transform+' rotate('+this_rotate+')" xlink:href="#'+symbols[drawdeck.pop()]+'"></use>'
 	}
 	s.innerHTML = t;
 	document.querySelector('svg#cards defs').appendChild(s);
