@@ -187,7 +187,7 @@ function Dobbler() {
 }
 Dobbler.prototype = {
 
-	geometryName: 'fano',
+	geometryName: 'dobble',
 	depth: 1,
 	page: null,
 	rows: 3,
