@@ -1,4 +1,4 @@
-# Droste Dobble
-Exploiting a fact about projective planes.
+# Make a set of projective cards
+This generates a set of cards that can be used in place of Dobble cards. The set is complete, so that the various theorems on projective planes hold exactly.
 
-Presented at MathsJam conference 2015. [Slides](http://www.mathsjam.com/conference/talks/2015/ChristianPerfect-DrosteDobble/#/).
+Note that the SVG generated is not good quality for printing through a regular package, although it does not perform too badly if printed from a browser to PDF.
