@@ -14,9 +14,13 @@ function shuffle (array) { // stolen shamelessly from https://www.frankmitchell.
     return array;
 }
 
-function fillArrayWithNumbers(n) { // stolen shamelessly from http://www.2ality.com/2013/11/initializing-arrays.html
-    var arr = Array.apply(null, Array(n));
-    return arr.map(function (x, i) { return i });
+function shuffled_range(n) {
+    var l = [];
+    for(var i=0;i<n;i++) {
+        l.push(i);
+    }
+    shuffle(l);
+    return l;
 }
 
 function makeSymbol_number(n) {
@@ -42,30 +46,52 @@ var sixty = Math.PI/3;
 function makeCard(id,symbols) {
     var s = document.createElementNS(xmlns,"g");
     s.setAttribute('id',id);
+
     var t = '<circle cx="0" cy="0" r="1" class="outline" stroke="black" stroke-width="0.03" fill="white"></circle>';
+
     var n,scale,translate;
     if(symbols.length==3) {
         n = 3;
         scale = 0.44;
-        translate = 1.2*scale;
+        translate = 1.2;
     } else if(symbols.length==8) {
         n = 7;
         scale = 0.28;
-            translate = 2.4*scale;
+        translate = 2.4;
     }
-    var alpha = 0.3;
-    var drawdeck = fillArrayWithNumbers(symbols.length);
-    shuffle(drawdeck);
+    var alpha = 0.5; // minimum scale within allotted space
+    var symbol_order = shuffled_range(symbols.length);
+
+    var scales = [];
+    var total = symbols.length*.8;
     for(var i=0;i<symbols.length;i++) {
-        var this_scale = alpha*scale+(1-alpha)*scale*Math.random();
-        var this_translate = translate/this_scale;
-        var this_rotate = 360*Math.random();
-        var transform = 'scale('+this_scale+')';
+        var remaining = alpha*(symbols.length-i-1);
+        var r = (alpha+(1-alpha)*Math.sqrt(Math.random()))*Math.min(total-remaining,1);
+        scales.push(r);
+        total -= r;
+    }
+
+    for(var i=0;i<symbols.length;i++) {
+        // scale down to fit in allotted space
+        var transform = 'scale('+scale+')';
         if(n==3 || i>0) {
             var rotate = (i*360/n);
-            transform += 'translate('+this_translate+') rotate('+rotate+' -'+this_translate+' 0)';
+            transform += 'translate('+translate+') rotate('+rotate+' -'+translate+' 0)';
         }
-        t += '<use x="0" y="0" transform="'+transform+' rotate('+this_rotate+')" xlink:href="#'+symbols[drawdeck.pop()]+'"></use>'
+
+        //per-symbol scale and rotate
+        var this_scale = scales[i];
+        var this_rotate = 360*Math.random();
+
+        // move around within the allotted area
+        var displace_an = Math.random()*360;
+        var displace_r = Math.random()*(1-this_scale);
+
+        transform += ' rotate('+displace_an+') translate('+displace_r+')';
+        transform += ' scale('+this_scale+') rotate('+this_rotate+')';
+
+        t += '<use x="0" y="0" transform="'+transform+'" xlink:href="#'+symbols[symbol_order[i]]+'"></use>'
+
     }
     s.innerHTML = t;
     document.querySelector('svg#cards defs').appendChild(s);
