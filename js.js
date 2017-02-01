@@ -3,24 +3,24 @@ var phi = (Math.sqrt(5)-1)/2;
 
 var alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
-function shuffle (array) { // stolen shamelessly from https://www.frankmitchell.org/2015/01/fisher-yates/
+function shuffle (arr) { // stolen shamelessly from https://www.frankmitchell.org/2015/01/fisher-yates/
+    arr = arr.slice();
     var i = 0, j = 0, temp = null;
-    for (i = array.length - 1; i > 0; i -= 1) {
+    for (i = arr.length - 1; i > 0; i -= 1) {
         j = Math.floor(Math.random() * (i + 1))
-        temp = array[i]
-        array[i] = array[j]
-        array[j] = temp
+        temp = arr[i]
+        arr[i] = arr[j]
+        arr[j] = temp
     }
-    return array;
+    return arr;
 }
 
-function shuffled_range(n) {
+function range(n) {
     var l = [];
     for(var i=0;i<n;i++) {
         l.push(i);
     }
-    shuffle(l);
-    return l;
+    return l
 }
 
 function makeSymbol_number(n) {
@@ -43,81 +43,8 @@ function makeSymbol_emoji(n) {
 }
 
 var sixty = Math.PI/3;
-function makeCard(id,symbols) {
-    var s = document.createElementNS(xmlns,"g");
-    s.setAttribute('id',id);
-
-    var t = '<circle cx="0" cy="0" r="1" class="outline" stroke="black" stroke-width="0.03" fill="white"></circle>';
-
-    var n,scale,translate;
-    if(symbols.length==3) {
-        n = 3;
-        scale = 0.44;
-        translate = 1.2;
-    } else if(symbols.length==8) {
-        n = 7;
-        scale = 0.28;
-        translate = 2.4;
-    }
-    var alpha = 0.5; // minimum scale within allotted space
-    var symbol_order = shuffled_range(symbols.length);
-
-    var scales = [];
-    var total = symbols.length*.8;
-    for(var i=0;i<symbols.length;i++) {
-        var remaining = alpha*(symbols.length-i-1);
-        var r = (alpha+(1-alpha)*Math.sqrt(Math.random()))*Math.min(total-remaining,1);
-        scales.push(r);
-        total -= r;
-    }
-
-    for(var i=0;i<symbols.length;i++) {
-        // scale down to fit in allotted space
-        var transform = 'scale('+scale+')';
-        if(n==3 || i>0) {
-            var rotate = (i*360/n);
-            transform += 'translate('+translate+') rotate('+rotate+' -'+translate+' 0)';
-        }
-
-        //per-symbol scale and rotate
-        var this_scale = scales[i];
-        var this_rotate = 360*Math.random();
-
-        // move around within the allotted area
-        var displace_an = Math.random()*360;
-        var displace_r = Math.random()*(1-this_scale);
-
-        transform += ' rotate('+displace_an+') translate('+displace_r+')';
-        transform += ' scale('+this_scale+') rotate('+this_rotate+')';
-
-        t += '<use x="0" y="0" transform="'+transform+'" xlink:href="#'+symbols[symbol_order[i]]+'"></use>'
-
-    }
-    s.innerHTML = t;
-    document.querySelector('svg#cards defs').appendChild(s);
-    return s;
-}
 
 // make the next level of Droste Dobble cards
-function droste(from,to,geometry) {
-    var div = document.createElement('div');
-    if(from=='symbol') {
-        geometry.map(function(js,i){
-            makeCard(to+i,js.map(function(j){return from+j}));
-        })
-    } else {
-        geometry.map(function(_,i){
-            var o = [];
-            geometry.forEach(function(c,j){
-                if(c.indexOf(i)>=0) {
-                    o.push(from+j);
-                }
-            });
-            makeCard(to+i,o);
-        })
-    }
-    return div;
-}
 
 
 var geometries = {
@@ -228,8 +155,93 @@ Dobbler.prototype = {
     page: null,
     rows: 3,
     cols: 2,
-    formatName: 'a4',
+    format: 'a4',
+    shuffle_symbols: false,
+    rotate_symbols: false,
+    min_symbol_scale: 0.4,
 
+    droste: function(from,to,geometry) {
+        var db = this;
+        var div = document.createElement('div');
+        if(from=='symbol') {
+            geometry.map(function(js,i){
+                db.makeCard(to+i,js.map(function(j){return from+j}));
+            })
+        } else {
+            geometry.map(function(_,i){
+                var o = [];
+                geometry.forEach(function(c,j){
+                    if(c.indexOf(i)>=0) {
+                        o.push(from+j);
+                    }
+                });
+                db.makeCard(to+i,o);
+            })
+        }
+        return div;
+    },
+
+    makeCard: function(id,symbols) {
+        var db = this;
+        var s = document.createElementNS(xmlns,"g");
+        s.setAttribute('id',id);
+
+        var t = '<circle cx="0" cy="0" r="1" class="outline" stroke="black" stroke-width="0.03" fill="white"></circle>';
+
+        var n,scale,translate;
+        if(symbols.length==3) {
+            n = 3;
+            scale = 0.44;
+            translate = 1.2;
+        } else if(symbols.length==8) {
+            n = 7;
+            scale = 0.28;
+            translate = 2.4;
+        }
+
+        var symbol_order = range(symbols.length);
+        if(this.shuffle_symbols) {
+            symbol_order = shuffle(symbol_order);
+        }
+
+        var scales = [];
+        var max = 0;
+        for(var i=0;i<symbols.length;i++) {
+            var r = Math.sqrt(Math.random());
+            scales.push(r);
+            max = Math.max(max,r);
+        }
+        scales = scales.map(function(r) {
+            return db.min_symbol_scale + (1-db.min_symbol_scale)*r/max;
+        });
+        scales = shuffle(scales);
+
+        for(var i=0;i<symbols.length;i++) {
+            // scale down to fit in allotted space
+            var transform = 'scale('+scale+')';
+            if(n==3 || i>0) {
+                var rotate = (i*360/n);
+                transform += 'translate('+translate+') rotate('+rotate+' -'+translate+' 0)';
+            }
+
+            //per-symbol scale and rotate
+            var this_scale = scales[i];
+            var this_rotate = this.rotate_symbols ? 360*Math.random() : 0;
+
+            // move around within the allotted area
+            var displace_an = Math.random()*360;
+            var displace_r = Math.random()*(1-this_scale);
+
+            transform += ' rotate('+displace_an+') translate('+displace_r+') rotate(-'+displace_an+')';
+            transform += ' scale('+this_scale+') rotate('+this_rotate+')';
+
+            t += '<use x="0" y="0" transform="'+transform+'" xlink:href="#'+symbols[symbol_order[i]]+'"></use>'
+
+        }
+        s.innerHTML = t;
+        document.querySelector('svg#cards defs').appendChild(s);
+        return s;
+    },
 
     make_symbols: function() {
         for(var i=0;i<57;i++) {
@@ -238,61 +250,71 @@ Dobbler.prototype = {
     },
 
     load_settings: function() {
+        var db = this;
+
         if(document.location.search) {
             var bits = document.location.search.slice(1).split('&');
             var width,height;
+
+            function intField(min) {
+                return function(v) {
+                    return Math.max(parseInt(v),min);
+                }
+            }
+            function optionField(options) {
+                return function(v) {
+                    v = v.toLowerCase();
+                    if(v in options) {
+                        return v
+                    }
+                }
+            }
+            function booleanField() {
+                return function(v) {
+                    return v.toLowerCase()=='true';
+                }
+            }
+            function stringField() {
+                return function(v) {
+                    return v;
+                }
+            }
+            var fields = {
+                'geometry': optionField(geometries),
+                'depth': intField(1),
+                'page': intField(0),
+                'rows': intField(1),
+                'cols': intField(1),
+                'single': function(v) {
+                    db.rows = 1;
+                    db.cols = 1;
+                    if(db.page===null) {
+                        db.page = 0;
+                    }
+                },
+                'format': optionField(formats),
+                'shuffle_symbols': booleanField(),
+                'rotate_symbols': booleanField(),
+                'width': stringField(),
+                'height': stringField()
+            }
+
             bits.map(function(bit) {
                 var item = bit.split('=');
                 var name = decodeURIComponent(item[0]);
                 var value = decodeURIComponent(item[1]);
                 if(value!='') {
-                    switch(name) {
-                    case 'geometry':
-                        value = value.toLowerCase();
-                        if(value in geometries) {
-                            this.geometryName = value;
-                        }
-                        break;
-                    case 'depth':
-                        this.depth = Math.max(parseInt(value),1);
-                        break;
-                    case 'page':
-                        this.page = Math.max(parseInt(value),0);
-                        break;
-                    case 'rows':
-                        this.rows = Math.max(parseInt(value),1);
-                        break;
-                    case 'cols':
-                        this.cols = Math.max(parseInt(value),1);
-                        break;
-                    case 'single':
-                        this.rows = 1;
-                        this.cols = 1;
-                        if(this.page===null) {
-                            this.page = 0;
-                        }
-                        break;
-                    case 'format':
-                        value = value.toLowerCase();
-                        if(value in formats) {
-                            this.formatName = value;
-                        }
-                        break;
-                    case 'width':
-                        width = value;
-                        break;
-                    case 'height':
-                        height = value;
-                        break;
+                    if(name in fields) {
+                        this[name] = fields[name](value);
                     }
                 }
             },this);
         }
         this.geometry = geometries[this.geometryName];
         if(width!==undefined && height!==undefined) {
-            this.format = [width,height];
+            this.dimensions = [width,height];
         } else {
-            this.format = formats[this.formatName];
+            this.dimensions = formats[this.format];
         }
     },
 
@@ -312,14 +334,14 @@ Dobbler.prototype = {
         for(var format in formats) {
             form.querySelector('select[name=format]').appendChild(make_element('option',{value:format},format));
         }
-        form.querySelector('select[name=format]').value = this.formatName;
+        form.querySelector('select[name=format]').value = this.format;
     },
 
     show_pages: function() {
         var from = 'symbol';
         var div;
         alphabet.split('').slice(0,this.depth).map(function(to) {
-            droste(from,to,this.geometry)
+            this.droste(from,to,this.geometry)
             from = to;
         },this);
 
@@ -335,8 +357,8 @@ Dobbler.prototype = {
     show_grid: function(page) {
         var rows = this.rows,
             cols = this.cols,
-            width = this.format[0],
-            height = this.format[1],
+            width = this.dimensions[0],
+            height = this.dimensions[1],
             depth = this.depth
         ;
 
