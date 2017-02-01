@@ -15,7 +15,7 @@ function makeSymbol_number(n) {
 var emoji = ['270F','1F683','1F621','270B','1F34C','1F48B','1F34D','2708','2709','1F6BD','1F347','1F349','1F649','1F344','1F335','26FA','1F414','1F368','1F31B','1F638','23F0','1F680','2714','2615','1F4A9','2764','1F428','1F341','1F30F','2693','1F385','1F3B8','1F381','1F457','2614','260E','1F6A9','1F687','1F691','26C4','26BD','231A','1F352','1F378','26FD','1F422','2702','2744','1F6B2','1F3A5','1F345','1F354','1F40C','1F6A2','2716','1F4A3','1F695','1F645','267B'];
 function makeSymbol_emoji(n) {
 	var g = document.createElementNS(xmlns,'g');
-	g.setAttribute('id','s'+n);
+	g.setAttribute('id','symbol'+n);
 	var t = '<use x="-0.85" y="-0.85" width="1.7" height="1.7" xlink:href="#'+emoji[n]+'"></use>';
 	g.innerHTML = t;
 	document.querySelector('svg#cards .symbols').appendChild(g);
@@ -53,9 +53,21 @@ function makeCard(id,symbols) {
 // make the next level of Droste Dobble cards
 function droste(from,to,geometry) {
 	var div = document.createElement('div');
-	geometry.map(function(js,i){
-		makeCard(to+i,js.map(function(j){return from+j}));
-	})
+	if(from=='symbol') {
+		geometry.map(function(js,i){
+			makeCard(to+i,js.map(function(j){return from+j}));
+		})
+	} else {
+		geometry.map(function(_,i){
+			var o = [];
+			geometry.forEach(function(c,j){
+				if(c.indexOf(i)>=0) {
+					o.push(from+j);
+				}
+			});
+			makeCard(to+i,o);
+		})
+	}
 	return div;
 }
 
@@ -65,7 +77,7 @@ var geometries = {
 		[0, 1, 2, 3, 4, 5, 6, 56], 
 		[0, 7, 14, 21, 28, 35, 42, 49], 
 		[0, 8, 16, 24, 32, 40, 48, 50],
-		[0,9, 18, 27, 29, 38, 47, 51],
+		[0, 9, 18, 27, 29, 38, 47, 51],
 		[0, 10, 20, 23, 33, 36, 46, 52],
 		[0, 11, 15, 26, 30, 41, 45, 53],
 		[0, 12, 17, 22, 34, 39, 44, 54],
@@ -256,7 +268,7 @@ Dobbler.prototype = {
 	},
 
 	show_pages: function() {
-		var from = 's';
+		var from = 'symbol';
 		var div;
 		alphabet.split('').slice(0,this.depth).map(function(to) {
 			droste(from,to,this.geometry)
