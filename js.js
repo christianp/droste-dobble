@@ -341,20 +341,38 @@ Dobbler.prototype = {
     },
 
     show_pages: function() {
+        var dd = this;
         var from = 'symbol';
         var div;
-        alphabet.split('').slice(0,this.depth).map(function(to) {
-            this.droste(from,to,this.geometry)
+        var letters = alphabet.split('').slice(0,this.depth);
+        var i = 0;
+        var page = 0;
+        function deeper() {
+            var to = letters[i];
+            dd.droste(from,to,dd.geometry)
             from = to;
-        },this);
-
-        if(this.page===null) {
-            for(var page=0;page*this.rows*this.cols<this.geometry.length;page+=1) {
-                this.show_grid(page);
+            i += 1;
+            if(i<letters.length) {
+                setTimeout(deeper,1);
+            } else {
+                show_page();
             }
-        } else {
-            this.show_grid(this.page);
         }
+
+        function show_page() {
+            if(dd.page===null) {
+                dd.show_grid(page);
+                page += 1;
+                if(page*dd.rows*dd.cols<dd.geometry.length) {
+                    setTimeout(show_page,1);
+                }
+            } else {
+                dd.show_grid(dd.page);
+            }
+        }
+
+        deeper();
+            
     },
 
     show_grid: function(page) {
