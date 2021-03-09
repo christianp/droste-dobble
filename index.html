@@ -7,40 +7,57 @@
 	<body class="loading">
 	<div id="loading">Working...</div>
 	<div id="everything">
-		<form id="options" method="GET">
-			<label>
-				Geometry
-				<select name="geometry" class="input">
-				</select>
-			</label>
-			<label>
-				Depth
-				<input class="input" name="depth" type="number" value="2" min="1" max="4"/>
-				<br/>
-				(warning: anything above 3 gets very slow very quickly)
-			</label>
-			<label>
-				Page
-				<input class="input" name="page" type="number" value="" min="0"/>
-			</label>
-			<label>
-				Rows
-				<input class="input" name="rows" type="number" value="5" min="1"/>
-			</label>
-			<label>
-				Columns
-				<input class="input" name="cols" type="number" value="4" min="1"/>
-			</label>
-			<label>
-				Format
-				<select class="input" name="format">
-				</select>
-			</label>
-			<button type="submit">Generate</button>
-		</form>
-		<div id="output">
-		</div>
+        <header>
+            <h1>Droste Dobble</h1>
+        </header>
+        <main>
+            <section id="intro">
+                <p>This goes with <a href="https://mathsjam.com/assets/talks/2015/ChristianPerfect-DrosteDobble/#/">a Big MathsJam talk from 2015</a>.</p>
+                <p>Dobble cards are points on a projective plane.</p>
+                <p>Each line contains all of the cards with a given symbol.</p>
+                <p>But a projective plane is its own dual: ifyou swap the lines and points, you get the same structure!</p>
+                <p>So there's no reason you shouldn't replace the symbols on a Dobble card with more Dobble cards.</p>
+                <p><strong>DOBBLECEPTION!</strong></p>
+            </section>
 
+            <section id="tool">
+                <form id="options" method="GET">
+                    <p class="explanation">Generate your own set of cards to print out and play with.</p>
+                    <label>
+                        Geometry
+                        <select name="geometry" class="input">
+                        </select>
+                    </label>
+                    <label>
+                        Depth
+                        <input class="input" name="depth" type="number" value="2" min="1" max="4"/>
+                        <br/>
+                        (warning: anything above 3 gets very slow very quickly)
+                    </label>
+                    <label>
+                        Page
+                        <input class="input" name="page" type="number" value="" min="0"/>
+                    </label>
+                    <label>
+                        Rows
+                        <input class="input" name="rows" type="number" value="5" min="1"/>
+                    </label>
+                    <label>
+                        Columns
+                        <input class="input" name="cols" type="number" value="4" min="1"/>
+                    </label>
+                    <label>
+                        Format
+                        <select class="input" name="format">
+                        </select>
+                    </label>
+                    <button type="submit">Generate</button>
+                </form>
+                <div id="output">
+                </div>
+            </section>
+
+        </main>
 
 
 

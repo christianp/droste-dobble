@@ -309,6 +309,9 @@ Dobbler.prototype = {
                     }
                 }
             },this);
+            if(this.depth>2) {
+                this.page = this.page || 0;
+            }
         }
         this.geometry = geometries[this.geometryName];
         if(width!==undefined && height!==undefined) {
